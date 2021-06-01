@@ -58,6 +58,53 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
+	function SoundLoop()
+	{ 
+		let _this = this,
+			playing = false,
+			currentAudio = null;
+
+		this.play = function(key)
+		{ 
+			let audio = document.querySelector(`audio[data-key='${key}']`);
+			
+			if(!audio){ 
+				throw Error("Key not found");
+			}
+			if( playing && _this.currentAudio !== null){ 
+				currentAudio.pause();
+			}
+
+			audio.play().then((response) =>{ 
+				_this.currentAudio = audio;
+			});	
+		
+		}
+
+		return _this;
+	}
+
+	let loop = new SoundLoop(),
+		kbdElements = document.querySelectorAll("kbd"),
+		drumKeys = { };
+	
+	Array.from(kbdElements).forEach((kbd,key) => {
+		let keyboardKey = kbd.innerText,
+			keyId = kbd.parentNode.dataset.key;
+		drumKeys[keyboardKey] = keyId;
+		drumKeys[keyboardKey.toLowerCase()] = keyId;
+	})
+
+	function getSoundKey(e)
+	{ 
+		let key = drumKeys[e.key];
+		loop.play( key );
+	}
+
+
+	document.body.addEventListener('keypress',function(e){ 
+		getSoundKey(e);
+	})
 
 </script>
 
